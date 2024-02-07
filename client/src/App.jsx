@@ -1,14 +1,22 @@
-import { useState } from 'react'
-
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Home, About, SignIn, SignUp, Dashboard, Projects } from './pages';
 
 function App() {
 
   return (
-    <>
-      <h1 className='text-3xl text-red-500'>
-        Hello world
-      </h1>
-    </>
+
+    <BrowserRouter>
+      <Routes>
+        <Route path={"/"} element={<Home />} />
+        <Route path={"/About"} element={<About />} />
+        <Route path={"/Sign-in"} element={<SignIn />} />
+        <Route path={"/Sign-up"} element={<SignUp />} />
+        <Route path={"/dashboard"} element={<Dashboard />} />
+        <Route path={"/projects"} element={<Projects />} />
+      </Routes>
+    </BrowserRouter>
+
   )
 }
 
