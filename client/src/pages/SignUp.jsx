@@ -1,21 +1,27 @@
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react'
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom';
+import { FaRegEye } from "react-icons/fa";
+import { GoEyeClosed } from "react-icons/go";
 
 export default function SignUp() {
 
   const [formData, setformData] = useState({})
   const [errormessage, seterrormessage] = useState(null);
   const [Loading, setLoading] = useState(false);
+  const [visible, setvisible] = useState(false)
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-       setformData({...formData , [e.target.id] : e.target.value.trim()})
+    setformData({ ...formData, [e.target.id]: e.target.value.trim() })
+  }
+  const handleVisible = () => {
+    setvisible(!visible)
   }
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if ( !formData.username || !formData.email || !formData.password) {
+    if (!formData.username || !formData.email || !formData.password) {
       return seterrormessage('Please fill all the fields');
     }
     try {
@@ -23,17 +29,17 @@ export default function SignUp() {
       seterrormessage(null)
       const res = await fetch('api/auth/signup', {
         method: 'POST',
-        headers: {'Content-Type' : 'application/json'},
-        body : JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
       const data = await res.json()
-    if(data.success === false){
-       seterrormessage(data.message)
-    }
-    setLoading(false);
-    if(res.ok){
-      navigate('/Sign-in')
-    }
+      if (data.success === false) {
+        seterrormessage(data.message)
+      }
+      setLoading(false);
+      if (res.ok) {
+        navigate('/Sign-in')
+      }
 
     } catch (error) {
       seterrormessage(error.message);
@@ -63,26 +69,34 @@ export default function SignUp() {
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
               <Label value='Your username' />
-              <TextInput type='text' placeholder='Username' id='username' onChange={handleChange}/>
+              <TextInput type='text' placeholder='Username' id='username' onChange={handleChange} />
             </div>
             <div>
               <Label value='Your email' />
-              <TextInput type='email' placeholder='name@company.com' id='email' onChange={handleChange}/>
+              <TextInput type='email' placeholder='name@company.com' id='email' onChange={handleChange} />
             </div>
             <div>
               <Label value='Your password' />
-              <TextInput type='password' placeholder='Password' id='password' onChange={handleChange}/>
+              <div className='relative'>
+                <TextInput
+                  type={visible ? "text" : "password"}
+                  placeholder='Password'
+                  id='password'
+                  onChange={handleChange}
+                />
+                <span className='absolute top-[14px] right-2 ' onClick={handleVisible}>{visible ? <GoEyeClosed /> : <FaRegEye />}</span>
+              </div>
             </div>
             <Button gradientDuoTone={"purpleToPink"} type='submit' disabled={Loading}>
               {
-                Loading ? 
-                (
-                 <>
-                   <Spinner size={"sm"} />
-                   <span className='pl-3'>Loading...</span>
-                 </>
-                ) :
-                'Sign up'
+                Loading ?
+                  (
+                    <>
+                      <Spinner size={"sm"} />
+                      <span className='pl-3'>Loading...</span>
+                    </>
+                  ) :
+                  'Sign up'
               }
             </Button>
           </form>

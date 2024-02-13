@@ -1,12 +1,13 @@
 import User from "../models/users.model.js";
 import bcryptjs from "bcryptjs"
 import { errorhandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
     const { username, email, password } = req.body
 
     if (!username || !email || !password || username === "" || email === "" || password === "") {
-          next(errorhandler(400, 'All fields are required'));
+        next(errorhandler(400, 'All fields are required'));
     }
 
     const hashedPassword = bcryptjs.hashSync(password, 10)
@@ -14,7 +15,7 @@ export const signup = async (req, res, next) => {
     const newUser = new User({
         username,
         email,
-        password : hashedPassword,
+        password: hashedPassword,
     })
 
     try {
@@ -24,5 +25,37 @@ export const signup = async (req, res, next) => {
         next(error)
     }
 
-   
+
+}
+
+export const signin = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    if (!email || !password || email === "" || password === "") {
+        next(errorhandler(400, "All fields are required"));
+    }
+
+    try {
+        const validUser = await User.findOne({ email });
+        if (!validUser) {
+            return next(errorhandler(404, 'User not found'));
+        }
+        const validPassword = bcryptjs.compareSync(password, validUser.password);
+
+        if (!validPassword) {
+            return next(errorhandler(400, 'Invaid Password'));
+        }
+
+        const token = jwt.sign(
+            { id: validUser._id }, process.env.JWT_SECRET,
+            // {expiresIn: '1d'} if we put this then it specifies a time otherwise on closing broweser it expires
+        )
+        const {password : pass, ...rest} = validUser._doc
+        res.status(200).cookie('access_token', token, {
+            httpOnly: true
+        }).json(rest)
+
+    } catch (error) {
+        next(error)
+    }
 }
