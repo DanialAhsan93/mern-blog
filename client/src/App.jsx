@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home, About, SignIn, SignUp, Dashboard, Projects } from './pages';
 import Header from "./components/Header";
+import FooterComp from './components/Footer';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path={"/dashboard"} element={<Dashboard />} />
         <Route path={"/projects"} element={<Projects />} />
       </Routes>
+      <FooterComp />
     </BrowserRouter>
 
   )
