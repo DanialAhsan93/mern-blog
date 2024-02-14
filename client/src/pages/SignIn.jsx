@@ -3,14 +3,16 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { FaRegEye } from "react-icons/fa";
 import { GoEyeClosed } from "react-icons/go";
+import { useDispatch, useSelector} from "react-redux"
+import { signInStart, signInSuccess, signInFaliure } from '../redux/user/userSlice';
 
 export default function Signin() {
 
   const [formData, setformData] = useState({})
-  const [errormessage, seterrormessage] = useState(null);
-  const [Loading, setLoading] = useState(false);
+  const { loading, error}= useSelector(state => state.user);
   const [visible, setvisible] = useState(false)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setformData({ ...formData, [e.target.id]: e.target.value.trim() })
@@ -22,11 +24,10 @@ export default function Signin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return seterrormessage('Please fill all the fields');
+      return dispatch(signInFaliure('Please fill all the fields'));
     }
     try {
-      setLoading(true);
-      seterrormessage(null)
+      dispatch(signInStart())
       const res = await fetch('api/auth/Signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,16 +35,16 @@ export default function Signin() {
       });
       const data = await res.json()
       if (data.success === false) {
-        seterrormessage(data.message)
+        dispatch(signInFaliure(data.message))
       }
-      setLoading(false);
+      // setLoading(false);
       if (res.ok) {
+        dispatch(signInSuccess(data))
         navigate('/')
       }
 
     } catch (error) {
-      seterrormessage(error.message);
-      setLoading(false)
+      dispatch(signInFaliure(error.message))
     }
   }
   return (
@@ -83,9 +84,9 @@ export default function Signin() {
                 <span className='absolute top-[14px] right-2 ' onClick={handleVisible}>{visible ? <GoEyeClosed /> : <FaRegEye />}</span>
               </div>
             </div>
-            <Button gradientDuoTone={"purpleToPink"} type='submit' disabled={Loading}>
+            <Button gradientDuoTone={"purpleToPink"} type='submit' disabled={loading}>
               {
-                Loading ?
+                loading ?
                   (
                     <>
                       <Spinner size={"sm"} />
@@ -103,9 +104,9 @@ export default function Signin() {
             </Link>
           </div>
           {
-            errormessage && (
+            error && (
               <Alert className='mt-5' color={"failure"}>
-                {errormessage}
+                {error}
               </Alert>
             )
           }
