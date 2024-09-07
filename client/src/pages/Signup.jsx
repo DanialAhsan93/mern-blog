@@ -1,8 +1,54 @@
-import { Button, Label, TextInput } from 'flowbite-react'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Signup() {
+
+  const [form, formData] = useState({});
+  const [errorMessage, seterrorMessage] = useState(null);
+  const [loading, setloading] = useState(false);
+  const navigate = useNavigate()
+
+  const handleInput = (e) => {
+    formData({ ...form, [e.target.id]: e.target.value.trim() });
+  }
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.username || !form.email || !form.password) {
+      return seterrorMessage('Please fill out all the fields.')
+    }
+
+    try {
+      setloading(true);
+      seterrorMessage(null);
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+
+      const data = await response.json();
+      if (data.success === false) {
+        // setloading(false)
+        return seterrorMessage(data.message)
+      }
+      setloading(false)
+      if (response.ok) {
+        navigate('/signin')
+      }
+      // console.log(data)
+      // if (data === "signup successful" ) {
+      //   alert(data)
+      // }else{
+      //   alert(data.message)
+      // }
+    } catch (error) {
+      seterrorMessage(error.message)
+      setloading(false)
+    }
+  }
   return (
     <div className='min-h-screen mt-20'>
       <div className='flex p-3 max-w-3xl flex-col md:flex-row md:items-center mx-auto gap-5'>
@@ -23,7 +69,7 @@ function Signup() {
         </div>
         {/* right */}
         <div className='flex-1'>
-          <form className='flex flex-col gap-4'>
+          <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div className=''>
               <Label value="Your username" />
 
@@ -31,29 +77,41 @@ function Signup() {
                 type='text'
                 placeholder='Username'
                 id='username'
+                onChange={handleInput}
+
               />
             </div>
             <div className=''>
               <Label value="Your email" />
 
               <TextInput
-                type='text'
+                type='email'
                 placeholder='name@company.com'
                 id='email'
+                onChange={handleInput}
               />
             </div>
             <div className=''>
               <Label value="Your password" />
 
               <TextInput
-                type='text'
+                type='password'
                 placeholder='Password'
                 id='password'
+                onChange={handleInput}
               />
             </div>
 
-            <Button gradientDuoTone={'purpleToPink'} type='submit'> 
-              Sign Up
+            <Button gradientDuoTone={'purpleToPink'} type='submit' disabled={loading}>
+              {
+                loading ? (
+                  <>
+                   <Spinner size={'sm'}/>
+                   <span className='pl-3'>loading...</span>
+                  </>
+                ) : 'Sign Up'
+              }
+              
             </Button>
           </form>
 
@@ -63,6 +121,14 @@ function Signup() {
               Sign In
             </Link>
           </div>
+
+          {
+            errorMessage && (
+              <Alert className='mt-5' color={'failure'}>
+                {errorMessage}
+              </Alert>
+            )
+          }
         </div>
       </div>
     </div>
