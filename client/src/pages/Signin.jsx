@@ -1,13 +1,17 @@
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react'
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {signInStart, signInSuccess, signInFailure} from '../redux/user/userSlice'
 
 function Signin() {
 
   const [form, formData] = useState({});
-  const [errorMessage, seterrorMessage] = useState(null);
-  const [loading, setloading] = useState(false);
-  const navigate = useNavigate()
+  // const [errorMessage, seterrorMessage] = useState(null);
+  // const [loading, setloading] = useState(false);
+  const {loading, error : errorMessage} = useSelector(state => state.user)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleInput = (e) => {
     formData({ ...form, [e.target.id]: e.target.value.trim() });
@@ -17,12 +21,12 @@ function Signin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email || !form.password) {
-      return seterrorMessage('Please fill out all the fields.')
+      // return seterrorMessage('Please fill out all the fields.')
+      return dispatch(signInFailure('Please fill out all the fields.'))
     }
 
     try {
-      setloading(true);
-      seterrorMessage(null);
+      dispatch(signInStart())
       const response = await fetch('/api/auth/Signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,10 +36,12 @@ function Signin() {
       const data = await response.json();
       if (data.success === false) {
         // setloading(false)
-        return seterrorMessage(data.message)
+        // return seterrorMessage(data.message);
+        dispatch(signInFailure(data.message));
       }
-      setloading(false)
+      // setloading(false)
       if (response.ok) {
+        dispatch(signInSuccess(data))
         navigate('/')
       }
       // console.log(data)
@@ -45,8 +51,9 @@ function Signin() {
       //   alert(data.message)
       // }
     } catch (error) {
-      seterrorMessage(error.message)
-      setloading(false)
+      // seterrorMessage(error.message)
+      // setloading(false);
+      dispatch(signInFailure(error.message));
     }
   }
   return (
