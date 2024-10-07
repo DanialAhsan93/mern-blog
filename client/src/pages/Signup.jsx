@@ -39,7 +39,7 @@ function Signup() {
       if (response.ok) {
         navigate('/signin')
       }
-      // console.log(data)
+      console.log(data)
       // if (data === "signup successful" ) {
       //   alert(data)
       // }else{
