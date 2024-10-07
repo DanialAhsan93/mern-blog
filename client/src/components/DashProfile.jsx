@@ -4,7 +4,7 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/
 import { app } from '../Firebase';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure } from '../redux/user/userSlice';
+import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess } from '../redux/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
@@ -122,7 +122,7 @@ function DashProfile() {
   const handleDelete = async () => {
     setshowModal(false)
     try {
-      dispatch(deleteUserStart())
+      // dispatch(deleteUserStart())
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: 'DELETE',
       });
@@ -142,6 +142,24 @@ function DashProfile() {
       dispatch(deleteUserFailure(error.message));
     }
 
+  };
+
+  const handleUserSignout =async () => {
+    try {
+      const res = await fetch('/api/user/signout',{
+        method:'POST'
+      });
+      const data = await res.json();
+      console.log(data);
+
+      if (!res.ok) {
+        console.log(data.message);
+      }else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -219,7 +237,7 @@ function DashProfile() {
 
       <div className='text-red-500 flex justify-between mt-5'>
         <span className='cursor-pointer' onClick={() => setshowModal(true)}>Delete Account</span>
-        <span className='cursor-pointer'>Sign Out</span>
+        <span className='cursor-pointer' onClick={handleUserSignout}>Sign Out</span>
       </div>
 
       {updateUserSuccess && (
