@@ -6,12 +6,12 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess } from '../redux/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 
 function DashProfile() {
-  const { currentUser, error } = useSelector(state => state.user);
+  const { currentUser, error, loading } = useSelector(state => state.user);
   const [imgFile, setImgFile] = useState(null);
   const [imgFileUrl, setImgFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -130,7 +130,7 @@ function DashProfile() {
       const data = await res.json();
       if (!res.ok) {
         dispatch(deleteUserFailure(data.message));
-      }else {
+      } else {
         dispatch(deleteUserSuccess(data));
         navigate('/signin')
       }
@@ -144,23 +144,24 @@ function DashProfile() {
 
   };
 
-  const handleUserSignout =async () => {
+  const handleUserSignout = async () => {
     try {
-      const res = await fetch('/api/user/signout',{
-        method:'POST'
+      const res = await fetch('/api/user/signout', {
+        method: 'POST'
       });
       const data = await res.json();
       console.log(data);
 
       if (!res.ok) {
         console.log(data.message);
-      }else {
+      } else {
         dispatch(signoutSuccess());
       }
     } catch (error) {
       console.log(error)
     }
   }
+
 
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
@@ -230,9 +231,24 @@ function DashProfile() {
           onChange={handleFormData}
         />
 
-        <Button type='submit' gradientDuoTone={'purpleToBlue'} outline>
-          Update
+
+        <Button type='submit' gradientDuoTone={'purpleToBlue'} outline disabled={loading || imageSuccessLoading}>
+          {loading || imageSuccessLoading ? 'Loading...' : 'Update'}
         </Button>
+
+        {currentUser.isAdmin && (
+          <Link to={'/create-post'}>
+            <Button
+              type='button'
+              gradientDuoTone={'purpleToPink'}
+              className='w-full'
+            >
+              Create a post
+            </Button>
+          </Link>
+
+        )
+        }
       </form>
 
       <div className='text-red-500 flex justify-between mt-5'>
