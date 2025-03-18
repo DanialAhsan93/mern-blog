@@ -47,7 +47,7 @@ export const getposts =async (req, res, next) => {
           {content : { $regex : req.query.searchTerm, $options : 'i' }}
         ]
       })
-    }).sort({updatedAt : sortDirection}).skip({startIndex}).limit(limit);
+    }).sort({updatedAt : sortDirection}).skip(startIndex).limit(limit);
 
     // total number of posts in mongo db
 
@@ -78,3 +78,4 @@ export const getposts =async (req, res, next) => {
     next(error)
   }
 };
+

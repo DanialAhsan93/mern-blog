@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import { Table } from 'flowbite-react';
 import { Link } from 'react-router-dom'
 function DashPosts() {
-  const [userPosts, setuserPosts] = useState([])
+  const [userPosts, setuserPosts] = useState([]);
+  const [showMore, setshowMore] = useState(true)
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -16,16 +17,38 @@ function DashPosts() {
     try {
       const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
       const data = await res.json();
+
       if (res.ok) {
         setuserPosts(data.posts);
+        // console.log(data.posts.length);
+        if (data.posts.length < 9) {
+          setshowMore(false);
+        }
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  const handleShowMore =async () => {
+    const startIndex = userPosts.length;
+    try {
+      const res =await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+      const data =await res.json();
+      if (res.ok) {
+        setuserPosts((prev) => [...prev, ...data.posts]);
+        console.log(data.posts.length)
+        if (data.posts.length < 9) {
+          setshowMore(false)
+        }
       }
     } catch (error) {
       console.log(error)
     }
   };
 
-  console.log(userPosts)
-
+ 
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {currentUser.isAdmin && userPosts.length > 0 ?
@@ -76,6 +99,13 @@ function DashPosts() {
                 )
               })}
             </Table>
+            {
+              showMore && (
+                <button className='text-teal-500 w-full mx-auto' onClick={handleShowMore}>
+                  Show More
+                </button>
+              )
+            }
           </>
         )
         :

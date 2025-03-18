@@ -26,6 +26,8 @@ function CreatePost() {
       };
 
       setimageUploadError(null);
+      setimageUploadProgress(0);
+
       const storage = getStorage(app);
       const fileName = new Date().getTime() + '-' + file.name;
       const storageRef = ref(storage, fileName);
@@ -38,7 +40,8 @@ function CreatePost() {
         },
         (error) => {
           setimageUploadError(error, 'Image upload failed');
-          setimageUploadProgress(null)
+          setimageUploadProgress(null);
+
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -57,17 +60,23 @@ function CreatePost() {
   };
 
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // if(!formData.image) {
+    //   setpublishError('Please upload an image before publishing');
+    //   return
+    // };
+
+
     try {
-      const res =await fetch('/api/post/create',{
-        method : 'POST',
-        headers : {'Content-Type' : 'application/json'},
-        body : JSON.stringify(formData)
+      const res = await fetch('/api/post/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
       });
 
-      const data =await res.json();
+      const data = await res.json();
 
       if (!res.ok) {
         setpublishError(data.message);
@@ -99,7 +108,7 @@ function CreatePost() {
             className='flex-1'
             onChange={(e) => setformData({ ...formData, title: e.target.value })}
           />
-          <Select onChange={(e) => setformData({...formData, category : e.target.value})}>
+          <Select onChange={(e) => setformData({ ...formData, category: e.target.value })}>
             <option value={'uncategorized'} >Select a category</option>
             <option value={'javascript'} >JavaScript</option>
             <option value={'react js'} >React.js</option>
@@ -138,12 +147,17 @@ function CreatePost() {
           <img src={formData.image} className='w-full h-72 object-contain' />
         )}
 
-        <ReactQuill theme='snow' placeholder='Write Something...' className='h-72 mb-12' required 
-          onChange={(value) => setformData({...formData, content : value})}
+        <ReactQuill theme='snow' placeholder='Write Something...' className='h-72 mb-12' required
+          onChange={(value) => setformData({ ...formData, content: value })}
         />
-        <Button type='submit' gradientDuoTone={'purpleToPink'}>
+
+        {/* <Button type='submit' gradientDuoTone={'purpleToPink'}>
+          Publish
+        </Button> */}
+        <Button type="submit" gradientDuoTone="purpleToPink" disabled={imageUploadProgress !== null}>
           Publish
         </Button>
+
 
         {publishError && (
           <Alert color={'failure'}>

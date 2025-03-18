@@ -29,7 +29,8 @@ function Header() {
     } catch (error) {
       console.log(error)
     }
-  }
+  };
+
   return (
     <Navbar className='border-b-2'>
       <Link to={'/'} className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold 
