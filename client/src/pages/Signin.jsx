@@ -1,8 +1,8 @@
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux';
-import {signInStart, signInSuccess, signInFailure} from '../redux/user/userSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice'
 import OAuth from '../components/OAuth';
 
 function Signin() {
@@ -10,14 +10,14 @@ function Signin() {
   const [form, formData] = useState({});
   // const [errorMessage, seterrorMessage] = useState(null);
   // const [loading, setloading] = useState(false);
-  const {loading, error : errorMessage} = useSelector(state => state.user)
+  const { loading, error: errorMessage } = useSelector(state => state.user)
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleInput = (e) => {
     formData({ ...form, [e.target.id]: e.target.value.trim() });
   }
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ function Signin() {
       const response = await fetch('/api/auth/Signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       })
 
       const data = await response.json();
@@ -44,7 +44,7 @@ function Signin() {
       if (response.ok) {
         dispatch(signInSuccess(data))
         navigate('/')
-      }
+      };
       // console.log(data)
       // if (data === "Signin successful" ) {
       //   alert(data)
@@ -78,7 +78,7 @@ function Signin() {
         {/* right */}
         <div className='flex-1'>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-            
+
             <div className=''>
               <Label value="Your email" />
 
@@ -104,12 +104,12 @@ function Signin() {
               {
                 loading ? (
                   <>
-                   <Spinner size={'sm'}/>
-                   <span className='pl-3'>loading...</span>
+                    <Spinner size={'sm'} />
+                    <span className='pl-3'>loading...</span>
                   </>
                 ) : 'Sign In'
               }
-              
+
             </Button>
             <OAuth />
           </form>
