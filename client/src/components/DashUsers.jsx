@@ -15,11 +15,12 @@ function DashUsers() {
   const [userIdToDelete, setUserIdToDelete] = useState('');
 
   const { currentUser } = useSelector((state) => state.user);
-
+  console.log(users)
   useEffect(() => {
     if (currentUser.isAdmin) {
       fetchUsers();
     }
+
   }, [currentUser._id]);
 
   const fetchUsers = async () => {
@@ -57,7 +58,23 @@ function DashUsers() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      const res = await fetch(`/api/user/delete/${userIdToDelete}`,{
+        method:'DELETE'
+      })
+      const data =await res.json();
 
+      if (res.ok) {
+        setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
+        setShowModal(false);
+      }else{
+        console.log(data.message);
+      };
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
 
   return (
@@ -144,7 +161,7 @@ function DashUsers() {
             <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 data:text-gray-200 mb-4 mx-auto' />
             <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>Are you sure you want to delete your account?</h3>
             <div className='flex justify-center gap-5'>
-              <Button color={'failure'} >
+              <Button color={'failure'} onClick={handleDeleteUser}>
                 Yes, I'm sure
               </Button>
               <Button color={'gray'} onClick={() => setShowModal(false)}>
