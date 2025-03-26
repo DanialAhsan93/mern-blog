@@ -37,7 +37,6 @@ function PostPage() {
       setLoading(false);
     }
   };
-  console.log(post);
 
   if (loading) {
     return (
