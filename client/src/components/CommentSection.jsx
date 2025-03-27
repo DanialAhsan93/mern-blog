@@ -3,13 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
 import Comment from '../components/Comment';
+import { useNavigate } from 'react-router-dom';
 
 function CommentSection({ postId }) {
   const [comment, setComment] = useState('');
   const [commentError, setCommentError] = useState(null)
   const { currentUser } = useSelector((state) => state.user);
   const [comments, setComments] = useState([]);
-
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,7 +57,46 @@ function CommentSection({ postId }) {
     }
   };
 
+  const handleLikeComment = async (commentId) => {
+    try {
+      if (!currentUser) {
+        navigate('/signin');
+        return;
+      };
 
+      const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+        method: 'PUT'
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data)
+        setComments(comments.map((comment) =>
+          comment._id === commentId ?
+            {
+              ...comment,
+              likes: data.likes,
+              numberOfLikes: data.likes.length,
+
+            } : comment
+        )
+        )
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleUpdateComment= async (commentId, userId) => {
+    try {
+      const res =await fetch(`/api/comment/updateComment/${commentId}/${userId}`,{
+        method:'PUT',
+        headers:{'Content-Type' : 'application/json'},
+        
+      })
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
 
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
@@ -123,8 +163,8 @@ function CommentSection({ postId }) {
             </div>
 
             {comments.map((commentItem) => (
-              <Comment key={commentItem._id} comment={commentItem}/>
-            ) )}
+              <Comment key={commentItem._id} comment={commentItem} onLike={handleLikeComment} edit={handleUpdateComment} />
+            ))}
           </>
 
         )
