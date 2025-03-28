@@ -86,16 +86,10 @@ function CommentSection({ postId }) {
     }
   };
 
-  const handleUpdateComment= async (commentId, userId) => {
-    try {
-      const res =await fetch(`/api/comment/updateComment/${commentId}/${userId}`,{
-        method:'PUT',
-        headers:{'Content-Type' : 'application/json'},
-        
-      })
-    } catch (error) {
-      console.log(error.message)
-    }
+  const handleEdit= async (comment, editedContent) => {
+    setComments(comments.map((c) => (
+      c._id === comment._id ? {...c, content : editedContent} : c
+    )))
   }
 
   return (
@@ -163,7 +157,7 @@ function CommentSection({ postId }) {
             </div>
 
             {comments.map((commentItem) => (
-              <Comment key={commentItem._id} comment={commentItem} onLike={handleLikeComment} edit={handleUpdateComment} />
+              <Comment key={commentItem._id} comment={commentItem} onLike={handleLikeComment} onEdit={handleEdit} />
             ))}
           </>
 
