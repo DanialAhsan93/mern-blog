@@ -86,85 +86,98 @@ function CommentSection({ postId }) {
     }
   };
 
-  const handleEdit= async (comment, editedContent) => {
+  const handleEdit = async (comment, editedContent) => {
     setComments(comments.map((c) => (
-      c._id === comment._id ? {...c, content : editedContent} : c
+      c._id === comment._id ? { ...c, content: editedContent } : c
     )))
-  }
+  };
 
-  return (
-    <div className='max-w-2xl mx-auto w-full p-3'>
-      {
-        currentUser ?
-          (
-            <div className='flex items-center gap-1 text-gray-500 text-sm'>
-              <p>Signed in as : </p>
-              <img src={currentUser.profilePicture} alt={currentUser.profilePicture} className='h-5 w-5 object-cover rounded-full' />
-              <Link to={'/dashboard?tab=profile'} className='text-xs text-cyan-500'>
-                @{currentUser.username}
-              </Link>
-            </div>
-          )
-          :
-          (
-            <div className='text-sm text-teal-500 my-5 flex gap-1'>
-              You must be signed in to comment
-              <Link to={'/signin'} className='text-blue-500 hover:underline'>
-                Sign In
-              </Link>
-            </div>
-          )
+  const handleDelete = async (comment) => {
+    if (!currentUser) {
+      navigate('/signin');
+      return;
+    };
+    comments.map((com) => {
+      if (com._id === comment._id) {
+        setComments(comments.filter((c) => c._id !== comment._id))
       }
+    }
+    )
+}
 
-      {
-        currentUser && (
-          <form onSubmit={handleSubmit} className='border border-teal-500 rounded-md p-3'>
-            <Textarea
-              placeholder='Add a comment'
-              rows={'3'}
-              maxLength={'200'}
-              onChange={(e) => setComment(e.target.value)}
-              value={comment}
-            />
-            <div className='flex justify-between items-center mt-5'>
-              <p className='text-xs text-gray-500'>
-                {200 - comment.length} characters remaining
-              </p>
-              <Button type='submit' outline gradientDuoTone={'purpleToBlue'} >
-                Submit
-              </Button>
-            </div>
-            {commentError && (
-              <Alert color='failure' className='mt-5'>{commentError}</Alert>
-            )}
-          </form>
-        )
-      }
-
-      {comments.length === 0 ?
+return (
+  <div className='max-w-2xl mx-auto w-full p-3'>
+    {
+      currentUser ?
         (
-          <p className='text-sm my-5'>
-            No Comments Yet!
-          </p>
-        ) :
-        (
-          <>
-            <div className='text-sm my-5 flex items-center gap-1'>
-              <p>Comments</p>
-              <div className='border border-gray-400 py-1 px-2 rounded-sm'>
-                <p>{comments.length}</p>
-              </div>
-            </div>
-
-            {comments.map((commentItem) => (
-              <Comment key={commentItem._id} comment={commentItem} onLike={handleLikeComment} onEdit={handleEdit} />
-            ))}
-          </>
-
+          <div className='flex items-center gap-1 text-gray-500 text-sm'>
+            <p>Signed in as : </p>
+            <img src={currentUser.profilePicture} alt={currentUser.profilePicture} className='h-5 w-5 object-cover rounded-full' />
+            <Link to={'/dashboard?tab=profile'} className='text-xs text-cyan-500'>
+              @{currentUser.username}
+            </Link>
+          </div>
         )
-      }
-    </div>
-  )
+        :
+        (
+          <div className='text-sm text-teal-500 my-5 flex gap-1'>
+            You must be signed in to comment
+            <Link to={'/signin'} className='text-blue-500 hover:underline'>
+              Sign In
+            </Link>
+          </div>
+        )
+    }
+
+    {
+      currentUser && (
+        <form onSubmit={handleSubmit} className='border border-teal-500 rounded-md p-3'>
+          <Textarea
+            placeholder='Add a comment'
+            rows={'3'}
+            maxLength={'200'}
+            onChange={(e) => setComment(e.target.value)}
+            value={comment}
+          />
+          <div className='flex justify-between items-center mt-5'>
+            <p className='text-xs text-gray-500'>
+              {200 - comment.length} characters remaining
+            </p>
+            <Button type='submit' outline gradientDuoTone={'purpleToBlue'} >
+              Submit
+            </Button>
+          </div>
+          {commentError && (
+            <Alert color='failure' className='mt-5'>{commentError}</Alert>
+          )}
+        </form>
+      )
+    }
+
+    {comments.length === 0 ?
+      (
+        <p className='text-sm my-5'>
+          No Comments Yet!
+        </p>
+      ) :
+      (
+        <>
+          <div className='text-sm my-5 flex items-center gap-1'>
+            <p>Comments</p>
+            <div className='border border-gray-400 py-1 px-2 rounded-sm'>
+              <p>{comments.length}</p>
+            </div>
+          </div>
+
+          {comments.map((commentItem) => (
+            <Comment key={commentItem._id} comment={commentItem} onLike={handleLikeComment} onEdit={handleEdit} onDelete={handleDelete} />
+          ))}
+        </>
+
+      )
+    }
+  </div>
+)
 }
 
 export default CommentSection

@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react'
 import moment from 'moment';
 import { FaThumbsUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
-import { Button, Textarea } from 'flowbite-react';
+import { Button, Modal, Textarea } from 'flowbite-react';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
-function Comment({ comment, onLike, onEdit }) {
+
+function Comment({ comment, onLike, onEdit, onDelete }) {
   const [user, setUser] = useState({});
   const [isEdit, setIsEdit] = useState(false);
+  const [showModal, setShowModal] = useState(false)
   const [editedContent, setEditedContent] = useState(comment.content);
-
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -34,18 +36,38 @@ function Comment({ comment, onLike, onEdit }) {
 
   const handleSave = async () => {
     try {
-      const res =await fetch(`/api/comment/editComment/${comment._id}`,{
-        method : 'PUT',
-        headers : {
-          'Content-Type' : 'application/json'
+      const res = await fetch(`/api/comment/editComment/${comment._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        body:JSON.stringify({
-          content : editedContent
+        body: JSON.stringify({
+          content: editedContent
         })
       });
       if (res.ok) {
         setIsEdit(false);
         onEdit(comment, editedContent);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!currentUser) {
+      navigate('/signin');
+      return;
+    }
+    try {
+      const res = await fetch(`/api/comment/deletecomment/${comment._id}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      console.log(data)
+      if (res.ok) {
+        onDelete(comment);
+        setShowModal(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -80,11 +102,11 @@ function Comment({ comment, onLike, onEdit }) {
                 <div className='flex justify-end pt-2 text-xs'>
                   <Button
                     type='button'
-                    size='sm' 
+                    size='sm'
                     gradientDuoTone='purpleToBlue'
                     className='mr-2'
                     onClick={handleSave}
-                    >
+                  >
                     Save
                   </Button>
 
@@ -121,12 +143,22 @@ function Comment({ comment, onLike, onEdit }) {
                   </p>
                   {
                     currentUser && (currentUser._id === comment.userId || currentUser.isAdmin) && (
-                      <button
-                        className='text-gray-400 hover:text-blue-500'
-                        onClick={handleEdit}
-                      >
-                        Edit
-                      </button>
+                      <div className='flex gap-2 '>
+                        <button
+                          className='text-gray-400 hover:text-blue-500'
+                          onClick={handleEdit}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          className='text-gray-400 hover:text-blue-500'
+                          onClick={() => setShowModal(true)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+
                     )
                   }
 
@@ -139,6 +171,29 @@ function Comment({ comment, onLike, onEdit }) {
 
 
       </div >
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size='md'
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 data:text-gray-200 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>Are you sure you want to delete your comment?</h3>
+            <div className='flex justify-center gap-5'>
+              <Button color={'failure'} onClick={handleDelete}>
+                Yes, I'm sure
+              </Button>
+              <Button color={'gray'} onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+
+      </Modal>
     </div >
   )
 }
