@@ -102,7 +102,7 @@ function DashUsers() {
                       <Table.Cell>
                         <img src={user.profilePicture} alt={user.username} className='w-10 h-10 object-fill bg-gray-500 rounded-full' />
                       </Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell className='text-gray-700 dark:text-white'>
                         {user.username}
                       </Table.Cell>
                       <Table.Cell className='text-gray-700 dark:text-white'>{user.email}</Table.Cell>

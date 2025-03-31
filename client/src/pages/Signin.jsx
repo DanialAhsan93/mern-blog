@@ -35,6 +35,7 @@ function Signin() {
       })
 
       const data = await response.json();
+      console.log(data)
       if (data.success === false) {
         // setloading(false)
         // return seterrorMessage(data.message);

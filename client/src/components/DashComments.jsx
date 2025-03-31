@@ -98,10 +98,10 @@ function DashComments() {
                       <Table.Cell className='text-gray-700 dark:text-white'>
                         {new Date(comment.updatedAt).toLocaleDateString()}
                       </Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell className='text-gray-700 dark:text-white'>
                         {comment.content}
                       </Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell className='text-gray-700 dark:text-white'>
                         {comment.numberOfLikes}
                       </Table.Cell>
                       <Table.Cell className='text-gray-700 dark:text-white'>{comment.postId}</Table.Cell>
