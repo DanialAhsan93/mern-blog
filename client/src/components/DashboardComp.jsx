@@ -70,6 +70,7 @@ function DashboardComp() {
     <div className='p-3 md:mx-auto'>
 
       <div className='flex flex-wrap gap-4 justify-center'>
+        
         <div className='flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md'>
           <div className='flex justify-between'>
             <div className=''>
@@ -112,7 +113,7 @@ function DashboardComp() {
           <div className='flex gap-2 text-sm'>
             <span className='text-green-500 flex items-center'>
               {
-                lastMonthUsers > 0 ? (
+                lastMonthComments > 0 ? (
                   <>
                     <HiArrowNarrowUp />
                     {lastMonthComments}
@@ -141,7 +142,7 @@ function DashboardComp() {
           <div className='flex gap-2 text-sm'>
             <span className='text-green-500 flex items-center'>
               {
-                lastMonthUsers > 0 ? (
+                lastMonthPosts > 0 ? (
                   <>
                     <HiArrowNarrowUp />
                     {lastMonthPosts}
