@@ -1,6 +1,6 @@
 import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,27 +9,47 @@ import { signoutSuccess } from '../redux/user/userSlice';
 
 function Header() {
   const path = useLocation().pathname;
+  const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser } = useSelector(state => state.user);
-  const {theme} = useSelector(state => state.theme);
+  const { theme } = useSelector(state => state.theme);
+  const [search, setSearch] = useState('');
 
-  const handleUserSignout =async () => {
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const urlSearchParams = searchParams.get('searchTerm');
+    if (urlSearchParams) {
+      setSearch(urlSearchParams);
+    }
+  }, [location.search])
+
+  const handleUserSignout = async () => {
     try {
-      const res = await fetch('/api/user/signout',{
-        method:'POST'
+      const res = await fetch('/api/user/signout', {
+        method: 'POST'
       });
       const data = await res.json();
       console.log(data);
 
       if (!res.ok) {
         console.log(data.message);
-      }else {
+      } else {
         dispatch(signoutSuccess());
       }
     } catch (error) {
       console.log(error)
     }
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('searchTerm', search);
+    const searchQuery = searchParams.toString();
+    navigate(`/search?${searchQuery}`)
+
+  }
 
   return (
     <Navbar className='border-b-2'>
@@ -42,12 +62,14 @@ function Header() {
         Blog
       </Link>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <TextInput
           type='text'
           placeholder='Search...'
           rightIcon={AiOutlineSearch}
           className='hidden lg:inline'
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </form>
 
@@ -56,8 +78,8 @@ function Header() {
       </Button>
 
       <div className='flex gap-2 md:order-2'>
-        <Button className='w-12 h-10 hidden sm:inline' color={'gray'} pill onClick={() => {dispatch(toggleTheme())}}>
-          {theme === 'light' ? <FaMoon /> : <FaSun  />}
+        <Button className='w-12 h-10 hidden sm:inline' color={'gray'} pill onClick={() => { dispatch(toggleTheme()) }}>
+          {theme === 'light' ? <FaMoon /> : <FaSun />}
         </Button>
 
         {currentUser ? (
