@@ -21,7 +21,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-      <ScrollToTop />
+        <ScrollToTop />
         <Header />
         <Routes>
           <Route path='/' element={<Home />} />
@@ -30,12 +30,12 @@ function App() {
             <Route path='/dashboard' element={<Dashboard />} />
           </Route>
           <Route element={<OnlyAdminPrivateRoute />} >
-          <Route path='/create-post' element={<CreatePost />} />
-          <Route path='/update-post/:postId' element={<Updatepost />} />
+            <Route path='/create-post' element={<CreatePost />} />
+            <Route path='/update-post/:postId' element={<Updatepost />} />
           </Route>
           <Route path='/signin' element={<Signin />} />
           <Route path='/signup' element={<Signup />} />
-          <Route path='/search' element={<Search />} />          
+          <Route path='/search' element={<Search />} />
           <Route path='/projects' element={<Projects />} />
           <Route path='/post/:postSlug' element={<PostPage />} />
         </Routes>
