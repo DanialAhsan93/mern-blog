@@ -8,7 +8,6 @@ function DashPosts() {
   const [showMore, setshowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState('');
-  console.log(postIdToDelete);
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -24,7 +23,7 @@ function DashPosts() {
 
       if (res.ok) {
         setuserPosts(data.posts);
-        // console.log(data.posts.length);
+        
         if (data.posts.length < 9) {
           setshowMore(false);
         }
@@ -34,6 +33,7 @@ function DashPosts() {
       console.log(error)
     }
   };
+
 
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
@@ -61,10 +61,10 @@ function DashPosts() {
         }
       );
       const data = await res.json();
-      if(!res.ok) {
+      if (!res.ok) {
         console.log(data.message);
 
-      }else {
+      } else {
         setuserPosts(userPosts.filter((post) => post._id !== postIdToDelete));
       }
     } catch (error) {
@@ -88,7 +88,7 @@ function DashPosts() {
                 <Table.HeadCell>Edit</Table.HeadCell>
 
               </Table.Head>
-              {userPosts.map((post) => {
+              {userPosts && userPosts.map((post) => {
                 return (
                   <Table.Body key={post._id} className='divide-y'>
                     <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
