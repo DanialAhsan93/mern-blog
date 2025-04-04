@@ -34,6 +34,11 @@ app.use('/api/comment',commentRoutes);
 
 
 
+app.listen(3000,() => {
+  console.log('server is running on port 3000!');
+});
+
+
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'internal sever error';
