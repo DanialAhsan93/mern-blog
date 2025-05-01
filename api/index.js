@@ -30,7 +30,7 @@ app.use('/api/post',postRoutes);
 app.use('/api/comment',commentRoutes);
 
 app.get("/", (req, res) => {
-  res.send("API is working!");
+  res.send("This is new!");
 });
 
 
