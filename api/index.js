@@ -6,7 +6,7 @@ import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
 import postRoutes from './routes/Post.route.js';
 import commentRoutes from './routes/comment.route.js';
-
+import cors from 'cors';
 
 dotenv.config();
 
@@ -20,6 +20,10 @@ mongoose.connect(process.env.MONGO).then (
   
 
 const app = express();
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://your-frontend-domain.com'], // adjust as needed
+  credentials: true, // only if you're using cookies or sessions
+}));
 
 app.use(express.json());
 app.use(cookieParser());
