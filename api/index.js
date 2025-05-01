@@ -29,6 +29,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/post',postRoutes);
 app.use('/api/comment',commentRoutes);
 
+app.get("/", (req, res) => {
+  res.send("API is working!");
+});
 
 
 // app.listen(3000,() => {
