@@ -84,11 +84,12 @@ export const google = async (req, res, next) => {
         process.env.JWT_Secret
       );
       const { password, ...rest } = user._doc;
+      const isProduction = process.env.NODE_ENV === 'production';
 
       res.status(200).cookie('access_token', token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'None',
+        secure: isProduction, // only true in production (https)
+        sameSite: isProduction ? 'None' : 'Lax',
       }).json(rest)
     } else {
       const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
@@ -104,11 +105,12 @@ export const google = async (req, res, next) => {
       await newUser.save();
       const token = jwt.sign({ id: newUser._id, isAdmin: newUser.isAdmin }, process.env.JWT_Secret);
       const { password, ...rest } = newUser._doc;
+      const isProduction = process.env.NODE_ENV === 'production';
 
       res.status(200).cookie('access_token', token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'None'
+        secure: isProduction, // only true in production (https)
+        sameSite: isProduction ? 'None' : 'Lax',
       }).json(rest);
     }
   } catch (error) {

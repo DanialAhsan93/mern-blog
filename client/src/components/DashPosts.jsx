@@ -18,9 +18,12 @@ function DashPosts() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?userId=${currentUser._id}&startIndex=0&limit=9`,{
+        method : 'GET',
+        credentials :'include'
+      });
       const data = await res.json();
-
+      console.log(data)
       if (res.ok) {
         setuserPosts(data.posts);
         
@@ -38,7 +41,9 @@ function DashPosts() {
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
-      const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`,{
+        credentials : 'include'
+      });
       const data = await res.json();
       if (res.ok) {
         setuserPosts((prev) => [...prev, ...data.posts]);
@@ -55,9 +60,10 @@ function DashPosts() {
   const handleDeletePost = async () => {
     setShowModal(false);
     try {
-      const res = await fetch(`api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
         {
           method: 'DELETE',
+          credentials : 'include'
         }
       );
       const data = await res.json();
@@ -72,7 +78,7 @@ function DashPosts() {
     }
   };
 
-
+  console.log(userPosts);
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {currentUser.isAdmin && userPosts.length > 0 ?
