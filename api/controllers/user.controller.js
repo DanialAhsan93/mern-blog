@@ -74,7 +74,11 @@ export const deleteUser = async (req, res, next) => {
 
 export const signout = async (req, res, next) => {
   try {
-    res.clearCookie('access_token').status(200).json('User have been signed out')
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    }).status(200).json('User have been signed out')
   } catch (error) {
     next(error)
   }
@@ -96,7 +100,7 @@ export const getUsers = async (req, res, next) => {
       .limit(limit);
 
     const usersWithoutPassword = user.map((user) => {
-      const {password, ...rest} = user._doc;
+      const { password, ...rest } = user._doc;
       return rest;
     });
 
@@ -111,11 +115,11 @@ export const getUsers = async (req, res, next) => {
     );
 
     const lastMonthUsers = await User.countDocuments({
-      createdAt:{$gte : oneMonthAgo},
+      createdAt: { $gte: oneMonthAgo },
     });
 
     res.status(200).json({
-      users : usersWithoutPassword,
+      users: usersWithoutPassword,
       totalUsers,
       lastMonthUsers,
     })
@@ -126,14 +130,14 @@ export const getUsers = async (req, res, next) => {
   }
 };
 
-export const getUser =async (req, res, next) => {
+export const getUser = async (req, res, next) => {
   try {
-   const user =await User.findById(req.params.userId);
-   if (!user) {
-    return next(errorHandler(404, 'User not found'));
-   }
-   const {password, ...rest} = user._doc;
-   res.status(200).json(rest);
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return next(errorHandler(404, 'User not found'));
+    }
+    const { password, ...rest } = user._doc;
+    res.status(200).json(rest);
   } catch (error) {
     next(error);
   }
