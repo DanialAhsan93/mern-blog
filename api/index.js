@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGO).then (
 
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://your-frontend-domain.com'], // adjust as needed
+  origin: 'http://localhost:5173',
   credentials: true, // only if you're using cookies or sessions
 }));
 

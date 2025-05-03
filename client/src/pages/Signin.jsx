@@ -29,11 +29,11 @@ function Signin() {
     try {
       dispatch(signInStart())
 
-      const response = await fetch(`/api/auth/Signin`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/Signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
         credentials: 'include',
+        body: JSON.stringify(form),
       })
 
       const data = await response.json();
