@@ -60,13 +60,12 @@ export const signin = async (req, res, next) => {
 
     // const rest = Object.assign({}, validUser._doc);
     // delete rest.password;
-    const isProduction = process.env.NODE_ENV === 'production';
 
 
     res.status(200).cookie('access_token', token, {
       httpOnly: true,
-      secure: isProduction, // only true in production
-  sameSite: isProduction ? 'None' : 'Lax',
+      secure: true,
+      sameSite: 'None'
     }).json(rest);
 
   } catch (error) {
@@ -109,7 +108,7 @@ export const google = async (req, res, next) => {
       res.status(200).cookie('access_token', token, {
         httpOnly: true,
         secure: true,
-        sameSite: 'None',
+        sameSite: 'None'
       }).json(rest);
     }
   } catch (error) {
