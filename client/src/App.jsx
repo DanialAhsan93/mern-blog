@@ -15,12 +15,14 @@ import Updatepost from './pages/Updatepost';
 import PostPage from './pages/PostPage';
 import ScrollToTop from './components/ScrollToTop';
 import Search from './pages/Search';
+import { HashRouter } from 'react-router-dom';
+
 
 function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <HashRouter>
         <ScrollToTop />
         <Header />
         <Routes>
@@ -40,7 +42,7 @@ function App() {
           <Route path='/post/:postSlug' element={<PostPage />} />
         </Routes>
         <FooterComp />
-      </BrowserRouter>
+      </HashRouter>
     </>
   )
 }
