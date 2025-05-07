@@ -1,5 +1,5 @@
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
-import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react'
+import { Alert, Button, FileInput, Select, Textarea, TextInput } from 'flowbite-react'
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -7,7 +7,8 @@ import { app } from '../Firebase';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from 'react-router-dom';
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
+
 
 function Updatepost() {
   const [formData, setformData] = useState({});
@@ -15,18 +16,20 @@ function Updatepost() {
   const [imageUploadProgress, setimageUploadProgress] = useState(null);
   const [imageUploadError, setimageUploadError] = useState(null);
   const [publishError, setpublishError] = useState(null);
-  const { postId } = useParams();
+  const { postId } = useParams()
 
   const navigate = useNavigate();
-  const {currentUser} = useSelector((state) => state.user)
+  const { currentUser } = useSelector((state) => state.user)
 
   useEffect(() => {
     try {
       const fetchPost = async () => {
-        const res = await fetch(`/api/post/getposts?postId=${postId}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?postId=${postId}`, {
+          method: 'GET',
+          credentials: 'include'
+        });
         const data = await res.json();
         if (!res.ok) {
-          console.log(data.message);
           setpublishError(data.message);
           return;
         }
@@ -43,6 +46,7 @@ function Updatepost() {
     };
 
   }, [postId]);
+
 
   const handleUploadImage = async () => {
     try {
@@ -90,13 +94,16 @@ function Updatepost() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {
+      console.log(formData._id)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/updatepost/${formData._id}/${currentUser._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        credentials: 'include',
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
+      console.log(data)
 
       if (!res.ok) {
         setpublishError(data.message);
@@ -173,9 +180,6 @@ function Updatepost() {
           value={formData.content}
         />
 
-        {/* <Button type='submit' gradientDuoTone={'purpleToPink'}>
-          Publish
-        </Button> */}
         <Button type="submit" gradientDuoTone="purpleToPink" disabled={imageUploadProgress !== null}>
           Update post
         </Button>

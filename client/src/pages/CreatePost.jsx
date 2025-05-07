@@ -1,5 +1,5 @@
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
-import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react'
+import { Alert, Button, FileInput, Select, Textarea, TextInput } from 'flowbite-react'
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -15,9 +15,11 @@ function CreatePost() {
   const [imageUploadProgress, setimageUploadProgress] = useState(null);
   const [imageUploadError, setimageUploadError] = useState(null);
   const [publishError, setpublishError] = useState(null);
+  const [isBold, setIsBold] = useState(false);
+
 
   const navigate = useNavigate();
-
+  console.log(formData);
   const handleUploadImage = async () => {
     try {
       if (!file) {
@@ -59,6 +61,8 @@ function CreatePost() {
     }
   };
 
+  const toggleBold = () => setIsBold(!isBold);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,14 +74,14 @@ function CreatePost() {
 
 
     try {
-      const res = await fetch('/api/post/create', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        credentials: 'include',
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         setpublishError(data.message);
         return
@@ -151,9 +155,8 @@ function CreatePost() {
           onChange={(value) => setformData({ ...formData, content: value })}
         />
 
-        {/* <Button type='submit' gradientDuoTone={'purpleToPink'}>
-          Publish
-        </Button> */}
+        
+
         <Button type="submit" gradientDuoTone="purpleToPink" disabled={imageUploadProgress !== null}>
           Publish
         </Button>

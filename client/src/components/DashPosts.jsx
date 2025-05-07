@@ -12,37 +12,35 @@ function DashPosts() {
 
   useEffect(() => {
     if (currentUser.isAdmin) {
+      const fetchPosts = async () => {
+        try {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?userId=${currentUser._id}`);
+          const data = await res.json();
+          console.log(data)
+          if (res.ok) {
+            setuserPosts(data.posts);
+
+            if (data.posts.length < 9) {
+              setshowMore(false);
+            }
+          }
+
+        } catch (error) {
+          console.log(error)
+        }
+      };
       fetchPosts();
     }
   }, [currentUser._id]);
 
-  const fetchPosts = async () => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?userId=${currentUser._id}&startIndex=0&limit=9`,{
-        method : 'GET',
-        credentials :'include'
-      });
-      const data = await res.json();
-      console.log(data)
-      if (res.ok) {
-        setuserPosts(data.posts);
-        
-        if (data.posts.length < 9) {
-          setshowMore(false);
-        }
-      }
 
-    } catch (error) {
-      console.log(error)
-    }
-  };
 
 
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`,{
-        credentials : 'include'
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`, {
+        credentials: 'include'
       });
       const data = await res.json();
       if (res.ok) {
@@ -63,7 +61,7 @@ function DashPosts() {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
         {
           method: 'DELETE',
-          credentials : 'include'
+          credentials: 'include'
         }
       );
       const data = await res.json();

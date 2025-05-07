@@ -20,7 +20,7 @@ function PostPage() {
 
   const fetchPost = async () => {
     try {
-      const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?slug=${postSlug}`);
       const data = await res.json();
 
       if (!res.ok) {
@@ -43,7 +43,7 @@ function PostPage() {
   useEffect(() => {
     const fetchRecentPosts =async () => {
       try {
-        const res =await fetch(`/api/post/getPosts?limit=3`);
+        const res =await fetch(`${import.meta.env.VITE_API_URL}/api/post/getPosts?limit=3`);
         const data =await res.json();
         if (res.ok) {
           setrecentPost(data.posts);

@@ -19,11 +19,12 @@ function CommentSection({ postId }) {
     };
 
     try {
-      const res = await fetch('/api/comment/create', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/comment/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials : 'include',
         body: JSON.stringify({ content: comment, postId, userId: currentUser._id })
       });
 
@@ -46,7 +47,10 @@ function CommentSection({ postId }) {
 
   const getComments = async () => {
     try {
-      const res = await fetch(`/api/comment/getPostComments/${postId}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/comment/getPostComments/${postId}`,{
+        method : 'GET',
+        credentials : 'include'
+      });
 
       if (res.ok) {
         const data = await res.json();
@@ -64,8 +68,9 @@ function CommentSection({ postId }) {
         return;
       };
 
-      const res = await fetch(`/api/comment/likeComment/${commentId}`, {
-        method: 'PUT'
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/comment/likeComment/${commentId}`, {
+        method: 'PUT',
+        credentials : 'include'
       });
       if (res.ok) {
         const data = await res.json();
