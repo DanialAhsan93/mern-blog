@@ -14,7 +14,7 @@ export default defineConfig({
   plugins: [react()],
   base: '/mern-blog/',
   build: {
-    outDir: 'build', // Specify the correct output directory
+    outDir: 'docs', // Specify the correct output directory
   },
  
 })
