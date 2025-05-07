@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGO).then (
 
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', , 'https://danialahsan93.github.io'],
   credentials: true, // only if you're using cookies or sessions
 }));
 
