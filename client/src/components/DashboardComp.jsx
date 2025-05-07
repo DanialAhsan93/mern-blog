@@ -17,53 +17,53 @@ function DashboardComp() {
   const { currentUser } = useSelector((state) => state.user)
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/getusers?limit=5`,{
-          credentials : 'include'
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setUsers(data.users);
-          setTotalUsers(data.totalUsers);
-          setLastMonthUsers(data.lastMonthUsers);
-        };
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
+    // const fetchUsers = async () => {
+    //   try {
+    //     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user/getusers?limit=5`,{
+    //       credentials : 'include'
+    //     });
+    //     const data = await res.json();
+    //     if (res.ok) {
+    //       setUsers(data.users);
+    //       setTotalUsers(data.totalUsers);
+    //       setLastMonthUsers(data.lastMonthUsers);
+    //     };
+    //   } catch (error) {
+    //     console.log(error.message);
+    //   }
+    // };
 
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?limit=5`,{
-          credentials : 'include'
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setPosts(data.posts);
-          setTotalPosts(data.totalPosts);
-          setlastMonthPosts(data.lastMonthPosts);
-        }
-      } catch (error) {
-        console.log(error.message);
-      };
-    };
+    // const fetchPosts = async () => {
+    //   try {
+    //     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/post/getposts?limit=5`,{
+    //       credentials : 'include'
+    //     });
+    //     const data = await res.json();
+    //     if (res.ok) {
+    //       setPosts(data.posts);
+    //       setTotalPosts(data.totalPosts);
+    //       setlastMonthPosts(data.lastMonthPosts);
+    //     }
+    //   } catch (error) {
+    //     console.log(error.message);
+    //   };
+    // };
 
-    const fetchComments = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/comment/getcomments?limit=5`,{
-          credentials : 'include'
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setComments(data.comments);
-          setTotalComments(data.totalComments);
-          setLastMonthComments(data.lastMonthComments);
-        }
-      } catch (error) {
-        console.log(error.message);
-      };
-    };
+    // const fetchComments = async () => {
+    //   try {
+    //     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/comment/getcomments?limit=5`,{
+    //       credentials : 'include'
+    //     });
+    //     const data = await res.json();
+    //     if (res.ok) {
+    //       setComments(data.comments);
+    //       setTotalComments(data.totalComments);
+    //       setLastMonthComments(data.lastMonthComments);
+    //     }
+    //   } catch (error) {
+    //     console.log(error.message);
+    //   };
+    // };
 
     if (currentUser.isAdmin) {
       fetchUsers();
