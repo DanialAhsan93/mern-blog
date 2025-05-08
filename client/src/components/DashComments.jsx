@@ -46,7 +46,9 @@ function DashComments() {
   const handleShowMore = async () => {
     const startIndex = comments.length;
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/comment/getcomments?startIndex=${startIndex}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/comment/getcomments?startIndex=${startIndex}`,{
+        credentials : 'include'
+      });
       const data = await res.json();
       if (res.ok) {
         setComments((prev) => [...prev, ...data.comments]);
